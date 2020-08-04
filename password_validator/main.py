@@ -8,14 +8,9 @@ def main():
         cat input_passwords.txt | ./password_validator weak_password_list.txt
     """
     parser = argparse.ArgumentParser(usage=usage)
-    # TODO: handle multiple password list files
-    parser.add_argument('weak_pw_list_paths', nargs=1, type=str)
+    parser.add_argument('weak_pw_list_path', nargs=1, type=str)
     args = parser.parse_args(sys.argv[1:])
-    print(args)
-    print(args.weak_pw_list_paths)
-    validate_passwords(sys.stdin, args.weak_pw_list_paths)
-
-
+    validate_passwords(sys.stdin, args.weak_pw_list_path[0])
 
 if __name__ == "__main__":
     main()
