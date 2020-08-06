@@ -7,16 +7,16 @@ def validate_passwords(pw_source_file, weak_pw_list_path):
     """
         Assumes pw_source_file is new-line delimited file object
     """
-    weak_pws = _load_weak_pws(weak_pw_list_path)
+    weak_pws = load_weak_pws(weak_pw_list_path)
 
     for line in pw_source_file:
         password = line.strip('\n')
-        response = _validate_password(password, weak_pws)
+        response = validate_password(password, weak_pws)
         if not response['valid']:
             print(response['msg'])
 
 
-def _load_weak_pws(weak_pw_file_list_path):
+def load_weak_pws(weak_pw_file_list_path):
     weak_pws = set()
     # TODO: check file size vs. available space in RAM
     with open(weak_pw_file_list_path, 'r') as f:
@@ -26,14 +26,14 @@ def _load_weak_pws(weak_pw_file_list_path):
     return weak_pws
 
 
-def _validate_length(password):
+def validate_length(password):
     if len(password) < PASSWORD_LEN_MIN or len(password) > PASSWORD_LEN_MAX:
         return False, len(password)
 
     return True, None
 
 
-def _validate_charset(password):
+def validate_charset(password):
     to_print = list(password)
     valid = True
     for i, char in enumerate(password):
@@ -48,18 +48,18 @@ def _validate_charset(password):
     return True, None
 
 
-def _validate_common_pw(common_pw_set, password):
+def validate_common_pw(common_pw_set, password):
     if password in common_pw_set:
         return False
 
     return True
 
 
-def _validate_password(password, common_pws):
+def validate_password(password, common_pws):
     response = {}
     
     # check length
-    valid_len, actual_len = _validate_length(password)
+    valid_len, actual_len = validate_length(password)
     if not valid_len:
         len_err_desc = 'Too Short' if actual_len < PASSWORD_LEN_MIN else 'Too Long'
         msg = '%s -> Error: %s' % (password, len_err_desc)
@@ -68,7 +68,7 @@ def _validate_password(password, common_pws):
             'msg': msg
         }
     # check charset
-    valid_charset, pw_to_print = _validate_charset(password)
+    valid_charset, pw_to_print = validate_charset(password)
     if not valid_charset:
         return {
             'valid': False,
@@ -76,7 +76,7 @@ def _validate_password(password, common_pws):
         }
 
     # check common password
-    passed_common_pw_test = _validate_common_pw(common_pws, password)
+    passed_common_pw_test = validate_common_pw(common_pws, password)
     if not passed_common_pw_test:
         return {
             'valid': False,
